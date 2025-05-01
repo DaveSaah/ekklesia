@@ -1,6 +1,7 @@
 import 'package:ekklesia/features/auth/signup_screen.dart';
 import 'package:ekklesia/features/home/main_screen.dart';
 import 'package:flutter/material.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -13,8 +14,12 @@ class _LoginScreenState extends State<LoginScreen>
     with SingleTickerProviderStateMixin {
   bool _obscureText = true;
   bool _isLoading = false;
+
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
+
+  // Supabase client
+  final supabase = Supabase.instance.client;
 
   // Animation controllers
   late AnimationController _animationController;
@@ -37,15 +42,56 @@ class _LoginScreenState extends State<LoginScreen>
       CurvedAnimation(parent: _animationController, curve: Curves.easeOutBack),
     );
 
-    // Start the animation when the screen loads
     _animationController.forward();
   }
 
   Future<void> _loginUser() async {
-    Navigator.pushReplacement(
-      context,
-      MaterialPageRoute(builder: (context) => const MainScreen()),
-    );
+    if (_emailController.text.isEmpty || _passwordController.text.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Please fill in all fields')),
+      );
+      return;
+    }
+
+    setState(() {
+      _isLoading = true;
+    });
+
+    try {
+      final response = await supabase.auth.signInWithPassword(
+        email: _emailController.text.trim(),
+        password: _passwordController.text.trim(),
+      );
+
+      if (response.user != null) {
+        if (mounted) {
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(builder: (context) => const MainScreen()),
+          );
+        }
+      } else {
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('Login failed. Incorrect credentials.'),
+            ),
+          );
+        }
+      }
+    } catch (error) {
+      // convert to supabase error
+      final supabaseError = error as AuthApiException;
+      if (mounted) {
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text(supabaseError.message)));
+      }
+    } finally {
+      setState(() {
+        _isLoading = false;
+      });
+    }
   }
 
   @override
@@ -72,7 +118,6 @@ class _LoginScreenState extends State<LoginScreen>
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
                     const SizedBox(height: 24),
-                    // Sign In Text
                     const Text(
                       "Welcome to ekklesia",
                       style: TextStyle(
@@ -83,8 +128,6 @@ class _LoginScreenState extends State<LoginScreen>
                       textAlign: TextAlign.center,
                     ),
                     const SizedBox(height: 8),
-
-                    // Ready to Collaborate Text
                     const Text(
                       "Ready to connect with other believers?",
                       style: TextStyle(fontSize: 14, color: Colors.white60),
@@ -92,7 +135,6 @@ class _LoginScreenState extends State<LoginScreen>
                     ),
                     const SizedBox(height: 32),
 
-                    // Email Label
                     const Text(
                       "Email Address",
                       style: TextStyle(
@@ -102,8 +144,6 @@ class _LoginScreenState extends State<LoginScreen>
                       ),
                     ),
                     const SizedBox(height: 8),
-
-                    // Email Input
                     Container(
                       decoration: BoxDecoration(
                         color: Colors.grey.shade200,
@@ -111,6 +151,11 @@ class _LoginScreenState extends State<LoginScreen>
                       ),
                       child: TextField(
                         controller: _emailController,
+                        style: TextStyle(
+                          fontSize: 14,
+                          fontWeight: FontWeight.w500,
+                          color: Colors.black,
+                        ),
                         decoration: InputDecoration(
                           hintText: 'Enter your email',
                           hintStyle: TextStyle(color: Colors.grey),
@@ -128,7 +173,6 @@ class _LoginScreenState extends State<LoginScreen>
                     ),
                     const SizedBox(height: 24),
 
-                    // Password Label
                     const Text(
                       "Password",
                       style: TextStyle(
@@ -138,8 +182,6 @@ class _LoginScreenState extends State<LoginScreen>
                       ),
                     ),
                     const SizedBox(height: 8),
-
-                    // Password Input
                     Container(
                       decoration: BoxDecoration(
                         color: Colors.grey.shade200,
@@ -147,6 +189,11 @@ class _LoginScreenState extends State<LoginScreen>
                       ),
                       child: TextField(
                         controller: _passwordController,
+                        style: TextStyle(
+                          fontSize: 14,
+                          fontWeight: FontWeight.w500,
+                          color: Colors.black,
+                        ),
                         obscureText: _obscureText,
                         decoration: InputDecoration(
                           hintText: '***************',
@@ -177,7 +224,6 @@ class _LoginScreenState extends State<LoginScreen>
                     ),
                     const SizedBox(height: 32),
 
-                    // Sign In Button with Loading Animation
                     ElevatedButton(
                       onPressed: _isLoading ? null : _loginUser,
                       style: ElevatedButton.styleFrom(
@@ -187,7 +233,6 @@ class _LoginScreenState extends State<LoginScreen>
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(4),
                         ),
-                        disabledBackgroundColor: Colors.grey.shade200,
                       ),
                       child:
                           _isLoading
@@ -195,9 +240,10 @@ class _LoginScreenState extends State<LoginScreen>
                                 height: 20,
                                 width: 20,
                                 child: CircularProgressIndicator(
+                                  backgroundColor: Colors.grey,
                                   strokeWidth: 2,
                                   valueColor: AlwaysStoppedAnimation<Color>(
-                                    Colors.orangeAccent,
+                                    Colors.white,
                                   ),
                                 ),
                               )
@@ -223,7 +269,6 @@ class _LoginScreenState extends State<LoginScreen>
                     ),
                     const SizedBox(height: 24),
 
-                    // Sign Up Text
                     Center(
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.center,
@@ -245,7 +290,7 @@ class _LoginScreenState extends State<LoginScreen>
                               padding: EdgeInsets.zero,
                               minimumSize: Size.zero,
                               tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                              foregroundColor: Colors.white,
+                              foregroundColor: Colors.orangeAccent,
                             ),
                             child: const Text(
                               "Sign Up",

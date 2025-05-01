@@ -1,5 +1,6 @@
 import 'package:ekklesia/features/auth/login_screen.dart' show LoginScreen;
 import 'package:flutter/material.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 class SignupScreen extends StatefulWidget {
   const SignupScreen({super.key});
@@ -24,6 +25,9 @@ class _SignupScreenState extends State<SignupScreen>
   late Animation<double> _fadeAnimation;
   late Animation<double> _scaleAnimation;
 
+  // supabase client
+  final supabase = Supabase.instance.client;
+
   @override
   void initState() {
     super.initState();
@@ -45,10 +49,138 @@ class _SignupScreenState extends State<SignupScreen>
   }
 
   Future<void> _registerUser() async {
-    Navigator.pushReplacement(
-      context,
-      MaterialPageRoute(builder: (context) => const LoginScreen()),
-    );
+    // validate fields
+    if (_nameController.text.isEmpty ||
+        _emailController.text.isEmpty ||
+        _passwordController.text.isEmpty ||
+        _confirmPasswordController.text.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Please fill in all fields')),
+      );
+      return;
+    }
+
+    // if password is too short
+    if (_passwordController.text.length < 8) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Password must be at least 8 characters')),
+      );
+      return;
+    }
+
+    // if name is too short
+    if (_nameController.text.length < 3) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Name must be at least 3 characters')),
+      );
+      return;
+    }
+
+    // Check if passwords match
+    if (_passwordController.text != _confirmPasswordController.text) {
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text('Passwords do not match')));
+      return;
+    }
+
+    setState(() {
+      _isLoading = true;
+    });
+
+    try {
+      final response = await supabase.auth.signUp(
+        email: _emailController.text,
+        password: _passwordController.text,
+      );
+
+      final userId = response.user?.id;
+
+      if (userId != null) {
+        await supabase.from('profiles').insert({
+          'id': userId,
+          'display_name': _nameController.text,
+        });
+      }
+
+      // Show success dialog
+      if (mounted) {
+        await showDialog(
+          context: context,
+          barrierDismissible: false,
+          builder:
+              (context) => Dialog(
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                backgroundColor: Colors.grey.shade900,
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 24.0,
+                    vertical: 20.0,
+                  ),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      const Icon(
+                        Icons.check_circle_outline,
+                        size: 56,
+                        color: Colors.orangeAccent,
+                      ),
+                      const SizedBox(height: 16),
+                      const Text(
+                        'Account Created!',
+                        style: TextStyle(
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.orangeAccent,
+                        ),
+                      ),
+                      const SizedBox(height: 12),
+                      ElevatedButton(
+                        onPressed: () => Navigator.of(context).pop(),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.orangeAccent,
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 24,
+                            vertical: 12,
+                          ),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                        ),
+                        child: const Text(
+                          'Continue',
+                          style: TextStyle(color: Colors.white),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+        );
+      }
+
+      // navigate to login screen
+      if (mounted) {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => const LoginScreen()),
+        );
+      }
+    } catch (error) {
+      // convert to supabase error
+      final supabaseError = error as AuthApiException;
+      if (mounted) {
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text(supabaseError.message)));
+      }
+    } finally {
+      setState(() {
+        _isLoading = false;
+      });
+    }
   }
 
   @override
@@ -97,7 +229,7 @@ class _SignupScreenState extends State<SignupScreen>
 
                     // Name Label
                     const Text(
-                      "First Name",
+                      "Name",
                       style: TextStyle(
                         fontSize: 14,
                         fontWeight: FontWeight.w500,
@@ -114,6 +246,11 @@ class _SignupScreenState extends State<SignupScreen>
                       ),
                       child: TextField(
                         controller: _nameController,
+                        style: TextStyle(
+                          fontSize: 14,
+                          fontWeight: FontWeight.w500,
+                          color: Colors.black,
+                        ),
                         decoration: const InputDecoration(
                           hintText: 'E.g. John',
                           hintStyle: TextStyle(color: Colors.grey),
@@ -148,6 +285,11 @@ class _SignupScreenState extends State<SignupScreen>
                       ),
                       child: TextField(
                         controller: _emailController,
+                        style: TextStyle(
+                          fontSize: 14,
+                          fontWeight: FontWeight.w500,
+                          color: Colors.black,
+                        ),
                         decoration: const InputDecoration(
                           hintText: 'Enter your email',
                           hintStyle: TextStyle(color: Colors.grey),
@@ -182,6 +324,11 @@ class _SignupScreenState extends State<SignupScreen>
                       ),
                       child: TextField(
                         controller: _passwordController,
+                        style: TextStyle(
+                          fontSize: 14,
+                          fontWeight: FontWeight.w500,
+                          color: Colors.black,
+                        ),
                         obscureText: _obscureText,
                         decoration: InputDecoration(
                           hintText: '***************',
@@ -244,6 +391,11 @@ class _SignupScreenState extends State<SignupScreen>
                       ),
                       child: TextField(
                         controller: _confirmPasswordController,
+                        style: TextStyle(
+                          fontSize: 14,
+                          fontWeight: FontWeight.w500,
+                          color: Colors.black,
+                        ),
                         obscureText: _obscureConfirmText,
                         decoration: InputDecoration(
                           hintText: '***************',
@@ -291,6 +443,7 @@ class _SignupScreenState extends State<SignupScreen>
                                 height: 20,
                                 width: 20,
                                 child: CircularProgressIndicator(
+                                  backgroundColor: Colors.grey,
                                   strokeWidth: 2,
                                   valueColor: AlwaysStoppedAnimation<Color>(
                                     Colors.white,
