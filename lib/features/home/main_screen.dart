@@ -1,6 +1,7 @@
 import 'package:ekklesia/features/event/event_screen.dart';
 import 'package:ekklesia/features/home/home_screen.dart';
 import 'package:ekklesia/features/prayer/prayer_screen.dart';
+import 'package:ekklesia/features/settings/settings_screen.dart';
 import 'package:ekklesia/features/volunteer/volunteer_screen.dart';
 import 'package:flutter/material.dart';
 
@@ -53,6 +54,17 @@ class _MainScreenState extends State<MainScreen> {
         ),
         elevation: 2,
         automaticallyImplyLeading: false,
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.settings, color: Colors.orangeAccent),
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (_) => const SettingsScreen()),
+              );
+            },
+          ),
+        ],
       ),
       body: _currentScreen,
       bottomNavigationBar: BottomNavigationBar(
