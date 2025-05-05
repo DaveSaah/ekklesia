@@ -3,6 +3,7 @@ import 'package:ekklesia/features/home/home_screen.dart';
 import 'package:ekklesia/features/prayer/prayer_screen.dart';
 import 'package:ekklesia/features/settings/settings_screen.dart';
 import 'package:ekklesia/features/volunteer/volunteer_screen.dart';
+import 'package:ekklesia/theme/app_colors.dart';
 import 'package:flutter/material.dart';
 
 class MainScreen extends StatefulWidget {
@@ -50,9 +51,12 @@ class _MainScreenState extends State<MainScreen> {
       appBar: AppBar(
         title: const Text(
           "ekklesia",
-          style: TextStyle(color: Colors.orangeAccent),
+          style: TextStyle(
+            color: Colors.orangeAccent,
+            fontWeight: FontWeight.w900,
+          ),
         ),
-        elevation: 2,
+        elevation: 0,
         automaticallyImplyLeading: false,
         actions: [
           IconButton(
@@ -92,10 +96,9 @@ class _MainScreenState extends State<MainScreen> {
         ],
         currentIndex: _currentIndex,
         type: BottomNavigationBarType.fixed,
-        selectedItemColor: Theme.of(context).colorScheme.primary,
-        unselectedItemColor: Colors.grey,
+        selectedItemColor: AppColors.primary,
+        unselectedItemColor: AppColors.textSecondary,
         showUnselectedLabels: true,
-        elevation: 0,
         onTap: _setCurrentScreen,
       ),
     );

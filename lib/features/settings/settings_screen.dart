@@ -1,3 +1,4 @@
+import 'package:ekklesia/theme/app_colors.dart';
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:ekklesia/features/home/splash_screen.dart';
@@ -18,6 +19,17 @@ class _SettingsScreenState extends State<SettingsScreen> {
   void initState() {
     super.initState();
     _fetchUserProfile();
+  }
+
+  Future<void> _signOut() async {
+    await supabase.auth.signOut();
+
+    if (mounted) {
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (_) => const SplashScreen()),
+      );
+    }
   }
 
   Future<void> _fetchUserProfile() async {
@@ -45,11 +57,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Settings', style: TextStyle(color: Colors.white)),
-        backgroundColor: Colors.orangeAccent,
-        iconTheme: const IconThemeData(color: Colors.white),
-      ),
+      appBar: AppBar(title: const Text('Settings')),
       body:
           _isLoading
               ? const Center(child: CircularProgressIndicator())
@@ -74,7 +82,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                                   : '?',
                               style: const TextStyle(
                                 fontSize: 36,
-                                color: Colors.white,
+                                color: AppColors.textPrimary,
                                 fontWeight: FontWeight.bold,
                               ),
                             ),
@@ -85,7 +93,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
                             style: const TextStyle(
                               fontSize: 24,
                               fontWeight: FontWeight.w700,
-                              color: Colors.white,
                             ),
                           ),
                         ],
@@ -100,15 +107,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                         color: Colors.orangeAccent,
                       ),
                       title: const Text('Sign Out'),
-                      onTap: () async {
-                        await supabase.auth.signOut();
-                        Navigator.pushReplacement(
-                          context,
-                          MaterialPageRoute(
-                            builder: (_) => const SplashScreen(),
-                          ),
-                        );
-                      },
+                      onTap: _signOut,
                     ),
                   ],
                 ),
