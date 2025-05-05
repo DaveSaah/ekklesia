@@ -47,13 +47,13 @@ class _LandingScreenState extends State<LandingScreen>
           '"I was glad when they said unto me, Let us go into the house of the Lord." - Psalm 122:1',
     },
     {
-      'image': 'assets/images/church_welcome.jpg',
+      'image': 'assets/images/a_place_for_everyone.jpeg',
       'title': 'A Place for Everyone',
       'verse':
           '"For where two or three gather in my name, there am I with them." - Matthew 18:20',
     },
     {
-      'image': 'assets/images/church_welcome.jpg',
+      'image': 'assets/images/grow_your_faith.jpeg',
       'title': 'Grow Your Faith with Us',
       'verse':
           '"Your word is a lamp for my feet, a light on my path." - Psalm 119:105',

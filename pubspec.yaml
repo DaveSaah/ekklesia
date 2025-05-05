@@ -27,6 +27,8 @@ flutter:
   assets:
     - .env
     - assets/images/church_welcome.jpg
+    - assets/images/a_place_for_everyone.jpeg
+    - 'assets/images/grow_your_faith.jpeg'
 
   fonts:
     - family: Inter
