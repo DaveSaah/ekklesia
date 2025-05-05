@@ -1,15 +1,242 @@
+import 'package:ekklesia/theme/app_colors.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
+import 'dart:async';
+import 'package:ekklesia/models/event.dart';
+import 'package:ekklesia/services/event_service.dart';
 
-class HomeScreen extends StatefulWidget {
+class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
 
   @override
-  State<HomeScreen> createState() => _HomeScreenState();
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: SingleChildScrollView(
+        child: Column(
+          children: [
+            // Event card
+            EventCard(),
+            // You can add other widgets here if needed
+          ],
+        ),
+      ),
+    );
+  }
 }
 
-class _HomeScreenState extends State<HomeScreen> {
+class EventCard extends StatefulWidget {
+  const EventCard({super.key});
+
+  @override
+  State<EventCard> createState() => _EventCardState();
+}
+
+class _EventCardState extends State<EventCard> {
+  late Future<Event?> _latestEventFuture;
+
+  @override
+  void initState() {
+    super.initState();
+    _latestEventFuture = EventService().getLatestEvent(); // Fetch latest event
+  }
+
   @override
   Widget build(BuildContext context) {
-    return const Scaffold(body: Text("Home"));
+    return FutureBuilder<Event?>(
+      future: _latestEventFuture,
+      builder: (context, snapshot) {
+        // Loading state
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return Card(
+            margin: const EdgeInsets.all(16.0),
+            elevation: 4,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Center(child: CircularProgressIndicator()),
+            ),
+          );
+        }
+
+        // Error state
+        if (snapshot.hasError) {
+          return Card(
+            margin: const EdgeInsets.all(16.0),
+            elevation: 4,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Center(child: Text('Error: ${snapshot.error}')),
+            ),
+          );
+        }
+
+        // No event found state
+        if (!snapshot.hasData || snapshot.data == null) {
+          return Card(
+            margin: const EdgeInsets.all(16.0),
+            elevation: 4,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Center(child: Text('No upcoming event found.')),
+            ),
+          );
+        }
+
+        // Event found
+        final event = snapshot.data!;
+        final String formattedDate = DateFormat(
+          'MMM dd, yyyy',
+        ).format(event.eventDate);
+
+        return Card(
+          margin: const EdgeInsets.all(16.0),
+          elevation: 4,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
+          child: Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // Countdown timer widget (compact version)
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Expanded(child: CountdownTimer(eventDate: event.eventDate)),
+                  ],
+                ),
+                const SizedBox(height: 8),
+                // Event title
+                Text(
+                  event.title, // Display the event title dynamically
+                  style: const TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                const SizedBox(height: 8),
+                // Event description
+                Text(
+                  event.description, // Display the event description
+                  style: const TextStyle(fontSize: 16, color: Colors.grey),
+                ),
+                const SizedBox(height: 8),
+                // Event date
+                Row(
+                  children: [
+                    Icon(Icons.calendar_month),
+                    SizedBox(width: 2),
+                    Text(
+                      formattedDate,
+                      style: const TextStyle(
+                        fontSize: 16,
+                        color: AppColors.textPrimary,
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 16),
+                // Register button
+                ElevatedButton(
+                  onPressed: () {
+                    // Handle registration logic
+                  },
+                  child: const Text("Register for Event"),
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+}
+
+class CountdownTimer extends StatefulWidget {
+  final DateTime eventDate;
+
+  const CountdownTimer({super.key, required this.eventDate});
+
+  @override
+  State<CountdownTimer> createState() => _CountdownTimerState();
+}
+
+class _CountdownTimerState extends State<CountdownTimer> {
+  late Timer _timer;
+  late Duration _remainingTime;
+
+  @override
+  void initState() {
+    super.initState();
+    _remainingTime = widget.eventDate.difference(DateTime.now());
+    _timer = Timer.periodic(const Duration(seconds: 1), _updateCountdown);
+  }
+
+  @override
+  void dispose() {
+    _timer.cancel();
+    super.dispose();
+  }
+
+  void _updateCountdown(Timer timer) {
+    setState(() {
+      _remainingTime = widget.eventDate.difference(DateTime.now());
+
+      // Stop the timer when the event has passed (remaining time is negative)
+      if (_remainingTime.isNegative) {
+        _timer.cancel();
+        _remainingTime =
+            Duration.zero; // Set it to zero to stop negative countdown
+      }
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    if (_remainingTime == Duration.zero) {
+      return Row(
+        children: const [
+          Icon(
+            Icons.live_tv, // Icon representing the event is live
+            color: Colors.green,
+          ),
+          SizedBox(width: 8),
+          Text(
+            "Event is Live",
+            style: TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.bold,
+              color: Colors.green,
+            ),
+          ),
+        ],
+      );
+    }
+
+    // Calculate days, hours, minutes, and seconds in a more compact form
+    String days = _remainingTime.inDays > 0 ? "${_remainingTime.inDays}d " : "";
+    String hours = (_remainingTime.inHours % 24).toString().padLeft(2, '0');
+    String minutes = (_remainingTime.inMinutes % 60).toString().padLeft(2, '0');
+    String seconds = (_remainingTime.inSeconds % 60).toString().padLeft(2, '0');
+
+    final String countdown = "$days$hours:$minutes:$seconds";
+
+    return Text(
+      "Time Remaining: $countdown",
+      style: const TextStyle(
+        fontSize: 16,
+        fontWeight: FontWeight.bold,
+        color: Colors.red,
+      ),
+    );
   }
 }
