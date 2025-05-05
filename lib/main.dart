@@ -1,4 +1,4 @@
-import 'package:ekklesia/features/auth/login_screen.dart';
+import 'package:ekklesia/features/home/splash_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
@@ -20,11 +20,13 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter Demo',
       debugShowCheckedModeBanner: false,
-      theme: ThemeData(brightness: Brightness.dark),
-      home: const LoginScreen(),
+      theme: ThemeData(
+        brightness: Brightness.dark,
         fontFamily: "Inter",
+        primaryColor: Colors.orangeAccent,
+      ),
+      home: const SplashScreen(),
     );
   }
 }
