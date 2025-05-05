@@ -22,4 +22,15 @@ class Event {
       eventCompleted: map['event_completed'] ?? false,
     );
   }
+
+  // Convert the Event object to a map for saving into cache or database
+  Map<String, dynamic> toMap() {
+    return {
+      'id': id,
+      'title': title,
+      'description': description,
+      'event_date': eventDate.toIso8601String(), // Convert DateTime to string
+      'event_completed': eventCompleted,
+    };
+  }
 }
