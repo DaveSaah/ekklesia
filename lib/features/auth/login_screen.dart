@@ -118,12 +118,12 @@ class _LoginScreenState extends State<LoginScreen>
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
                     const SizedBox(height: 24),
-                    const Text(
+                    Text(
                       "Welcome to ekklesia",
                       style: TextStyle(
                         fontSize: 24,
                         fontWeight: FontWeight.bold,
-                        color: Colors.orangeAccent,
+                        color: Theme.of(context).primaryColor,
                       ),
                       textAlign: TextAlign.center,
                     ),
@@ -135,12 +135,12 @@ class _LoginScreenState extends State<LoginScreen>
                     ),
                     const SizedBox(height: 32),
 
-                    const Text(
+                    Text(
                       "Email Address",
                       style: TextStyle(
                         fontSize: 14,
                         fontWeight: FontWeight.w500,
-                        color: Colors.orangeAccent,
+                        color: Theme.of(context).primaryColor,
                       ),
                     ),
                     const SizedBox(height: 8),
@@ -160,9 +160,9 @@ class _LoginScreenState extends State<LoginScreen>
                           hintText: 'Enter your email',
                           hintStyle: TextStyle(color: Colors.grey),
                           border: InputBorder.none,
-                          prefixIcon: const Icon(
+                          prefixIcon: Icon(
                             Icons.email_outlined,
-                            color: Colors.orangeAccent,
+                            color: Theme.of(context).primaryColor,
                           ),
                           contentPadding: const EdgeInsets.symmetric(
                             vertical: 12,
@@ -173,12 +173,12 @@ class _LoginScreenState extends State<LoginScreen>
                     ),
                     const SizedBox(height: 24),
 
-                    const Text(
+                    Text(
                       "Password",
                       style: TextStyle(
                         fontSize: 14,
                         fontWeight: FontWeight.w500,
-                        color: Colors.orangeAccent,
+                        color: Theme.of(context).primaryColor,
                       ),
                     ),
                     const SizedBox(height: 8),
@@ -199,16 +199,16 @@ class _LoginScreenState extends State<LoginScreen>
                           hintText: '***************',
                           hintStyle: TextStyle(color: Colors.grey),
                           border: InputBorder.none,
-                          prefixIcon: const Icon(
+                          prefixIcon: Icon(
                             Icons.lock_outline,
-                            color: Colors.orangeAccent,
+                            color: Theme.of(context).primaryColor,
                           ),
                           suffixIcon: IconButton(
                             icon: Icon(
                               _obscureText
                                   ? Icons.visibility_off_outlined
                                   : Icons.visibility_outlined,
-                              color: Colors.orangeAccent,
+                              color: Theme.of(context).primaryColor,
                             ),
                             onPressed: () {
                               setState(() {
@@ -227,7 +227,7 @@ class _LoginScreenState extends State<LoginScreen>
                     ElevatedButton(
                       onPressed: _isLoading ? null : _loginUser,
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.orangeAccent,
+                        backgroundColor: Theme.of(context).primaryColor,
                         padding: const EdgeInsets.symmetric(vertical: 16),
                         elevation: 0,
                         shape: RoundedRectangleBorder(
@@ -290,13 +290,13 @@ class _LoginScreenState extends State<LoginScreen>
                               padding: EdgeInsets.zero,
                               minimumSize: Size.zero,
                               tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                              foregroundColor: Colors.orangeAccent,
+                              foregroundColor: Theme.of(context).primaryColor,
                             ),
-                            child: const Text(
+                            child: Text(
                               "Sign Up",
                               style: TextStyle(
                                 fontWeight: FontWeight.w500,
-                                color: Colors.orangeAccent,
+                                color: Theme.of(context).primaryColor,
                               ),
                             ),
                           ),

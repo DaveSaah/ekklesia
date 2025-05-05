@@ -1,4 +1,4 @@
-import 'package:ekklesia/features/auth/login_screen.dart' show LoginScreen;
+import 'package:ekklesia/features/auth/login_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
@@ -122,25 +122,25 @@ class _SignupScreenState extends State<SignupScreen>
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      const Icon(
+                      Icon(
                         Icons.check_circle_outline,
                         size: 56,
-                        color: Colors.orangeAccent,
+                        color: Theme.of(context).primaryColor,
                       ),
                       const SizedBox(height: 16),
-                      const Text(
+                      Text(
                         'Account Created!',
                         style: TextStyle(
                           fontSize: 20,
                           fontWeight: FontWeight.bold,
-                          color: Colors.orangeAccent,
+                          color: Theme.of(context).primaryColor,
                         ),
                       ),
                       const SizedBox(height: 12),
                       ElevatedButton(
                         onPressed: () => Navigator.of(context).pop(),
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.orangeAccent,
+                          backgroundColor: Theme.of(context).primaryColor,
                           padding: const EdgeInsets.symmetric(
                             horizontal: 24,
                             vertical: 12,
@@ -208,12 +208,12 @@ class _SignupScreenState extends State<SignupScreen>
                   mainAxisSize: MainAxisSize.min,
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
-                    const Text(
+                    Text(
                       "Create Account",
                       style: TextStyle(
                         fontSize: 24,
                         fontWeight: FontWeight.bold,
-                        color: Colors.orangeAccent,
+                        color: Theme.of(context).primaryColor,
                       ),
                       textAlign: TextAlign.center,
                     ),
@@ -228,12 +228,12 @@ class _SignupScreenState extends State<SignupScreen>
                     const SizedBox(height: 32),
 
                     // Name Label
-                    const Text(
+                    Text(
                       "Name",
                       style: TextStyle(
                         fontSize: 14,
                         fontWeight: FontWeight.w500,
-                        color: Colors.orangeAccent,
+                        color: Theme.of(context).primaryColor,
                       ),
                     ),
                     const SizedBox(height: 8),
@@ -251,13 +251,13 @@ class _SignupScreenState extends State<SignupScreen>
                           fontWeight: FontWeight.w500,
                           color: Colors.black,
                         ),
-                        decoration: const InputDecoration(
+                        decoration: InputDecoration(
                           hintText: 'E.g. John',
                           hintStyle: TextStyle(color: Colors.grey),
                           border: InputBorder.none,
                           prefixIcon: Icon(
                             Icons.person_outline,
-                            color: Colors.orangeAccent,
+                            color: Theme.of(context).primaryColor,
                           ),
                           contentPadding: EdgeInsets.symmetric(vertical: 12),
                         ),
@@ -267,12 +267,12 @@ class _SignupScreenState extends State<SignupScreen>
                     const SizedBox(height: 24),
 
                     // Email Label
-                    const Text(
+                    Text(
                       "Email Address",
                       style: TextStyle(
                         fontSize: 14,
                         fontWeight: FontWeight.w500,
-                        color: Colors.orangeAccent,
+                        color: Theme.of(context).primaryColor,
                       ),
                     ),
                     const SizedBox(height: 8),
@@ -290,13 +290,13 @@ class _SignupScreenState extends State<SignupScreen>
                           fontWeight: FontWeight.w500,
                           color: Colors.black,
                         ),
-                        decoration: const InputDecoration(
+                        decoration: InputDecoration(
                           hintText: 'Enter your email',
                           hintStyle: TextStyle(color: Colors.grey),
                           border: InputBorder.none,
                           prefixIcon: Icon(
                             Icons.email_outlined,
-                            color: Colors.orangeAccent,
+                            color: Theme.of(context).primaryColor,
                           ),
                           contentPadding: EdgeInsets.symmetric(vertical: 12),
                         ),
@@ -306,12 +306,12 @@ class _SignupScreenState extends State<SignupScreen>
                     const SizedBox(height: 24),
 
                     // Password Label
-                    const Text(
+                    Text(
                       "Password",
                       style: TextStyle(
                         fontSize: 14,
                         fontWeight: FontWeight.w500,
-                        color: Colors.orangeAccent,
+                        color: Theme.of(context).primaryColor,
                       ),
                     ),
                     const SizedBox(height: 8),
@@ -334,16 +334,16 @@ class _SignupScreenState extends State<SignupScreen>
                           hintText: '***************',
                           hintStyle: TextStyle(color: Colors.grey),
                           border: InputBorder.none,
-                          prefixIcon: const Icon(
+                          prefixIcon: Icon(
                             Icons.lock_outline,
-                            color: Colors.orangeAccent,
+                            color: Theme.of(context).primaryColor,
                           ),
                           suffixIcon: IconButton(
                             icon: Icon(
                               _obscureText
                                   ? Icons.visibility_off_outlined
                                   : Icons.visibility_outlined,
-                              color: Colors.orangeAccent,
+                              color: Theme.of(context).primaryColor,
                             ),
                             onPressed: () {
                               setState(() {
@@ -373,12 +373,12 @@ class _SignupScreenState extends State<SignupScreen>
                     const SizedBox(height: 16),
 
                     // Confirm Password Label
-                    const Text(
+                    Text(
                       "Confirm Password",
                       style: TextStyle(
                         fontSize: 14,
                         fontWeight: FontWeight.w500,
-                        color: Colors.orangeAccent,
+                        color: Theme.of(context).primaryColor,
                       ),
                     ),
                     const SizedBox(height: 8),
@@ -401,16 +401,16 @@ class _SignupScreenState extends State<SignupScreen>
                           hintText: '***************',
                           hintStyle: TextStyle(color: Colors.grey),
                           border: InputBorder.none,
-                          prefixIcon: const Icon(
+                          prefixIcon: Icon(
                             Icons.lock_outline,
-                            color: Colors.orangeAccent,
+                            color: Theme.of(context).primaryColor,
                           ),
                           suffixIcon: IconButton(
                             icon: Icon(
                               _obscureConfirmText
                                   ? Icons.visibility_off_outlined
                                   : Icons.visibility_outlined,
-                              color: Colors.orangeAccent,
+                              color: Theme.of(context).primaryColor,
                             ),
                             onPressed: () {
                               setState(() {
@@ -430,7 +430,7 @@ class _SignupScreenState extends State<SignupScreen>
                     ElevatedButton(
                       onPressed: _isLoading ? null : _registerUser,
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.orangeAccent,
+                        backgroundColor: Theme.of(context).primaryColor,
                         padding: const EdgeInsets.symmetric(vertical: 16),
                         elevation: 0,
                         shape: RoundedRectangleBorder(
@@ -492,7 +492,7 @@ class _SignupScreenState extends State<SignupScreen>
                               padding: EdgeInsets.zero,
                               minimumSize: Size.zero,
                               tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                              foregroundColor: Colors.orangeAccent,
+                              foregroundColor: Theme.of(context).primaryColor,
                             ),
                             child: const Text(
                               "Sign In",
