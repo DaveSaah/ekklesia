@@ -1,4 +1,5 @@
 import 'package:ekklesia/features/auth/login_screen.dart';
+import 'package:ekklesia/theme/app_colors.dart';
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
@@ -113,7 +114,6 @@ class _SignupScreenState extends State<SignupScreen>
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(12),
                 ),
-                backgroundColor: Colors.grey.shade900,
                 child: Padding(
                   padding: const EdgeInsets.symmetric(
                     horizontal: 24.0,
@@ -125,7 +125,7 @@ class _SignupScreenState extends State<SignupScreen>
                       Icon(
                         Icons.check_circle_outline,
                         size: 56,
-                        color: Theme.of(context).primaryColor,
+                        color: AppColors.primary,
                       ),
                       const SizedBox(height: 16),
                       Text(
@@ -133,14 +133,14 @@ class _SignupScreenState extends State<SignupScreen>
                         style: TextStyle(
                           fontSize: 20,
                           fontWeight: FontWeight.bold,
-                          color: Theme.of(context).primaryColor,
+                          color: AppColors.primary,
                         ),
                       ),
                       const SizedBox(height: 12),
                       ElevatedButton(
                         onPressed: () => Navigator.of(context).pop(),
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: Theme.of(context).primaryColor,
+                          backgroundColor: AppColors.primary,
                           padding: const EdgeInsets.symmetric(
                             horizontal: 24,
                             vertical: 12,
@@ -151,7 +151,7 @@ class _SignupScreenState extends State<SignupScreen>
                         ),
                         child: const Text(
                           'Continue',
-                          style: TextStyle(color: Colors.white),
+                          style: TextStyle(color: AppColors.accentColor),
                         ),
                       ),
                     ],
@@ -168,13 +168,17 @@ class _SignupScreenState extends State<SignupScreen>
           MaterialPageRoute(builder: (context) => const LoginScreen()),
         );
       }
-    } catch (error) {
-      // convert to supabase error
-      final supabaseError = error as AuthApiException;
+    } on AuthApiException catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(
           context,
-        ).showSnackBar(SnackBar(content: Text(supabaseError.message)));
+        ).showSnackBar(SnackBar(content: Text(e.message)));
+      }
+    } on AuthRetryableFetchException {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text("No internet connection available")),
+        );
       }
     } finally {
       setState(() {
@@ -208,12 +212,13 @@ class _SignupScreenState extends State<SignupScreen>
                   mainAxisSize: MainAxisSize.min,
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
+                    const SizedBox(height: 54),
                     Text(
                       "Create Account",
                       style: TextStyle(
                         fontSize: 24,
                         fontWeight: FontWeight.bold,
-                        color: Theme.of(context).primaryColor,
+                        color: AppColors.primary,
                       ),
                       textAlign: TextAlign.center,
                     ),
@@ -222,7 +227,10 @@ class _SignupScreenState extends State<SignupScreen>
                     // Join the community text
                     const Text(
                       "Join our church community",
-                      style: TextStyle(fontSize: 14, color: Colors.white60),
+                      style: TextStyle(
+                        fontSize: 14,
+                        color: AppColors.textSecondary,
+                      ),
                       textAlign: TextAlign.center,
                     ),
                     const SizedBox(height: 32),
@@ -233,7 +241,7 @@ class _SignupScreenState extends State<SignupScreen>
                       style: TextStyle(
                         fontSize: 14,
                         fontWeight: FontWeight.w500,
-                        color: Theme.of(context).primaryColor,
+                        color: AppColors.primary,
                       ),
                     ),
                     const SizedBox(height: 8),
@@ -241,7 +249,7 @@ class _SignupScreenState extends State<SignupScreen>
                     // Name Input
                     Container(
                       decoration: BoxDecoration(
-                        color: Colors.grey.shade200,
+                        color: AppColors.textSecondary.withAlpha(80),
                         borderRadius: BorderRadius.circular(4),
                       ),
                       child: TextField(
@@ -249,15 +257,15 @@ class _SignupScreenState extends State<SignupScreen>
                         style: TextStyle(
                           fontSize: 14,
                           fontWeight: FontWeight.w500,
-                          color: Colors.black,
+                          color: AppColors.textPrimary,
                         ),
                         decoration: InputDecoration(
                           hintText: 'E.g. John',
-                          hintStyle: TextStyle(color: Colors.grey),
+                          hintStyle: TextStyle(color: AppColors.textSecondary),
                           border: InputBorder.none,
                           prefixIcon: Icon(
                             Icons.person_outline,
-                            color: Theme.of(context).primaryColor,
+                            color: AppColors.primary,
                           ),
                           contentPadding: EdgeInsets.symmetric(vertical: 12),
                         ),
@@ -272,7 +280,7 @@ class _SignupScreenState extends State<SignupScreen>
                       style: TextStyle(
                         fontSize: 14,
                         fontWeight: FontWeight.w500,
-                        color: Theme.of(context).primaryColor,
+                        color: AppColors.primary,
                       ),
                     ),
                     const SizedBox(height: 8),
@@ -280,7 +288,7 @@ class _SignupScreenState extends State<SignupScreen>
                     // Email Input
                     Container(
                       decoration: BoxDecoration(
-                        color: Colors.grey.shade200,
+                        color: AppColors.textSecondary.withAlpha(80),
                         borderRadius: BorderRadius.circular(4),
                       ),
                       child: TextField(
@@ -288,15 +296,15 @@ class _SignupScreenState extends State<SignupScreen>
                         style: TextStyle(
                           fontSize: 14,
                           fontWeight: FontWeight.w500,
-                          color: Colors.black,
+                          color: AppColors.textPrimary,
                         ),
                         decoration: InputDecoration(
                           hintText: 'Enter your email',
-                          hintStyle: TextStyle(color: Colors.grey),
+                          hintStyle: TextStyle(color: AppColors.textSecondary),
                           border: InputBorder.none,
                           prefixIcon: Icon(
                             Icons.email_outlined,
-                            color: Theme.of(context).primaryColor,
+                            color: AppColors.primary,
                           ),
                           contentPadding: EdgeInsets.symmetric(vertical: 12),
                         ),
@@ -311,7 +319,7 @@ class _SignupScreenState extends State<SignupScreen>
                       style: TextStyle(
                         fontSize: 14,
                         fontWeight: FontWeight.w500,
-                        color: Theme.of(context).primaryColor,
+                        color: AppColors.primary,
                       ),
                     ),
                     const SizedBox(height: 8),
@@ -319,7 +327,7 @@ class _SignupScreenState extends State<SignupScreen>
                     // Password Input
                     Container(
                       decoration: BoxDecoration(
-                        color: Colors.grey.shade200,
+                        color: AppColors.textSecondary.withAlpha(80),
                         borderRadius: BorderRadius.circular(4),
                       ),
                       child: TextField(
@@ -327,23 +335,23 @@ class _SignupScreenState extends State<SignupScreen>
                         style: TextStyle(
                           fontSize: 14,
                           fontWeight: FontWeight.w500,
-                          color: Colors.black,
+                          color: AppColors.textPrimary,
                         ),
                         obscureText: _obscureText,
                         decoration: InputDecoration(
                           hintText: '***************',
-                          hintStyle: TextStyle(color: Colors.grey),
+                          hintStyle: TextStyle(color: AppColors.textSecondary),
                           border: InputBorder.none,
                           prefixIcon: Icon(
                             Icons.lock_outline,
-                            color: Theme.of(context).primaryColor,
+                            color: AppColors.primary,
                           ),
                           suffixIcon: IconButton(
                             icon: Icon(
                               _obscureText
                                   ? Icons.visibility_off_outlined
                                   : Icons.visibility_outlined,
-                              color: Theme.of(context).primaryColor,
+                              color: AppColors.primary,
                             ),
                             onPressed: () {
                               setState(() {
@@ -365,7 +373,7 @@ class _SignupScreenState extends State<SignupScreen>
                         "Password must be at least 8 characters long",
                         style: TextStyle(
                           fontSize: 12,
-                          color: Colors.grey,
+                          color: AppColors.textSecondary,
                           fontStyle: FontStyle.italic,
                         ),
                       ),
@@ -378,7 +386,7 @@ class _SignupScreenState extends State<SignupScreen>
                       style: TextStyle(
                         fontSize: 14,
                         fontWeight: FontWeight.w500,
-                        color: Theme.of(context).primaryColor,
+                        color: AppColors.primary,
                       ),
                     ),
                     const SizedBox(height: 8),
@@ -386,7 +394,7 @@ class _SignupScreenState extends State<SignupScreen>
                     // Confirm Password Input
                     Container(
                       decoration: BoxDecoration(
-                        color: Colors.grey.shade200,
+                        color: AppColors.textSecondary.withAlpha(80),
                         borderRadius: BorderRadius.circular(4),
                       ),
                       child: TextField(
@@ -394,23 +402,23 @@ class _SignupScreenState extends State<SignupScreen>
                         style: TextStyle(
                           fontSize: 14,
                           fontWeight: FontWeight.w500,
-                          color: Colors.black,
+                          color: AppColors.textPrimary,
                         ),
                         obscureText: _obscureConfirmText,
                         decoration: InputDecoration(
                           hintText: '***************',
-                          hintStyle: TextStyle(color: Colors.grey),
+                          hintStyle: TextStyle(color: AppColors.textSecondary),
                           border: InputBorder.none,
                           prefixIcon: Icon(
                             Icons.lock_outline,
-                            color: Theme.of(context).primaryColor,
+                            color: AppColors.primary,
                           ),
                           suffixIcon: IconButton(
                             icon: Icon(
                               _obscureConfirmText
                                   ? Icons.visibility_off_outlined
                                   : Icons.visibility_outlined,
-                              color: Theme.of(context).primaryColor,
+                              color: AppColors.primary,
                             ),
                             onPressed: () {
                               setState(() {
@@ -430,7 +438,7 @@ class _SignupScreenState extends State<SignupScreen>
                     ElevatedButton(
                       onPressed: _isLoading ? null : _registerUser,
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: Theme.of(context).primaryColor,
+                        backgroundColor: AppColors.primary,
                         padding: const EdgeInsets.symmetric(vertical: 16),
                         elevation: 0,
                         shape: RoundedRectangleBorder(
@@ -443,10 +451,10 @@ class _SignupScreenState extends State<SignupScreen>
                                 height: 20,
                                 width: 20,
                                 child: CircularProgressIndicator(
-                                  backgroundColor: Colors.grey,
+                                  backgroundColor: AppColors.textSecondary,
                                   strokeWidth: 2,
                                   valueColor: AlwaysStoppedAnimation<Color>(
-                                    Colors.white,
+                                    AppColors.accentColor,
                                   ),
                                 ),
                               )
@@ -458,14 +466,14 @@ class _SignupScreenState extends State<SignupScreen>
                                     style: TextStyle(
                                       fontSize: 16,
                                       fontWeight: FontWeight.w500,
-                                      color: Colors.white,
+                                      color: AppColors.accentColor,
                                     ),
                                   ),
                                   SizedBox(width: 8),
                                   Icon(
                                     Icons.arrow_forward,
                                     size: 18,
-                                    color: Colors.white,
+                                    color: AppColors.accentColor,
                                   ),
                                 ],
                               ),
@@ -477,7 +485,7 @@ class _SignupScreenState extends State<SignupScreen>
                         children: [
                           const Text(
                             "Already have an account? ",
-                            style: TextStyle(color: Colors.white60),
+                            style: TextStyle(color: AppColors.textSecondary),
                           ),
                           TextButton(
                             onPressed: () {
@@ -492,7 +500,7 @@ class _SignupScreenState extends State<SignupScreen>
                               padding: EdgeInsets.zero,
                               minimumSize: Size.zero,
                               tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                              foregroundColor: Theme.of(context).primaryColor,
+                              foregroundColor: AppColors.primary,
                             ),
                             child: const Text(
                               "Sign In",

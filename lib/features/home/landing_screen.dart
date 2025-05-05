@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 import 'package:ekklesia/features/auth/login_screen.dart';
+import 'package:ekklesia/theme/app_colors.dart';
 
 class LandingScreen extends StatefulWidget {
   const LandingScreen({super.key});
@@ -87,35 +88,37 @@ class _LandingScreenState extends State<LandingScreen>
                     height: double.infinity,
                     fit: BoxFit.cover,
                   ),
-                  Container(color: Colors.black.withValues(alpha: 128)),
+                  Container(color: Colors.black.withValues(alpha: 100)),
                   SafeArea(
                     child: Padding(
                       padding: const EdgeInsets.all(24.0),
                       child: FadeTransition(
                         opacity: _fadeAnimation,
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Text(
-                              item['title']!,
-                              textAlign: TextAlign.center,
-                              style: const TextStyle(
-                                fontSize: 30,
-                                fontWeight: FontWeight.bold,
-                                color: Colors.white,
+                        child: Center(
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Text(
+                                item['title']!,
+                                textAlign: TextAlign.center,
+                                style: const TextStyle(
+                                  fontSize: 30,
+                                  fontWeight: FontWeight.bold,
+                                  color: AppColors.accentColor,
+                                ),
                               ),
-                            ),
-                            const SizedBox(height: 24),
-                            Text(
-                              item['verse']!,
-                              textAlign: TextAlign.center,
-                              style: const TextStyle(
-                                fontSize: 20,
-                                fontStyle: FontStyle.italic,
-                                color: Colors.white70,
+                              const SizedBox(height: 24),
+                              Text(
+                                item['verse']!,
+                                textAlign: TextAlign.center,
+                                style: const TextStyle(
+                                  fontSize: 20,
+                                  fontStyle: FontStyle.italic,
+                                  color: AppColors.textSecondary,
+                                ),
                               ),
-                            ),
-                          ],
+                            ],
+                          ),
                         ),
                       ),
                     ),
@@ -136,7 +139,7 @@ class _LandingScreenState extends State<LandingScreen>
                   dotHeight: 10,
                   dotWidth: 10,
                   spacing: 10,
-                  activeDotColor: Theme.of(context).primaryColor,
+                  activeDotColor: AppColors.primary,
                   dotColor: Colors.white54,
                 ),
               ),
@@ -165,11 +168,14 @@ class _LandingScreenState extends State<LandingScreen>
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(12),
                 ),
-                backgroundColor: Theme.of(context).primaryColor,
+                backgroundColor: AppColors.primary,
               ),
               child: Text(
                 _currentPage == landingData.length - 1 ? 'Get Started' : 'Next',
-                style: const TextStyle(fontSize: 18, color: Colors.white),
+                style: const TextStyle(
+                  fontSize: 18,
+                  color: AppColors.buttonPrimary,
+                ),
               ),
             ),
           ),
