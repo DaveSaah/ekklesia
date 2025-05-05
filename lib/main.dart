@@ -21,11 +21,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      theme: ThemeData(
-        brightness: Brightness.dark,
-        fontFamily: "Inter",
-        primaryColor: Colors.orangeAccent,
-      ),
+      theme: ThemeData(useMaterial3: true, fontFamily: "Inter"),
       home: const SplashScreen(),
     );
   }
