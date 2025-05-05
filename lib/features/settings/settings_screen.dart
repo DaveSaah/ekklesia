@@ -1,3 +1,4 @@
+import 'package:ekklesia/services/user_service.dart';
 import 'package:ekklesia/theme/app_colors.dart';
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
@@ -11,14 +12,12 @@ class SettingsScreen extends StatefulWidget {
 }
 
 class _SettingsScreenState extends State<SettingsScreen> {
+  final userService = UserService();
   final supabase = Supabase.instance.client;
-  String displayName = '';
-  bool _isLoading = true;
 
   @override
   void initState() {
     super.initState();
-    _fetchUserProfile();
   }
 
   Future<void> _signOut() async {
@@ -32,86 +31,63 @@ class _SettingsScreenState extends State<SettingsScreen> {
     }
   }
 
-  Future<void> _fetchUserProfile() async {
-    final userId = supabase.auth.currentUser?.id;
-    if (userId == null) {
-      setState(() {
-        _isLoading = false;
-      });
-      return;
-    }
-
-    final response =
-        await supabase
-            .from('profiles')
-            .select('display_name')
-            .eq('id', userId)
-            .single();
-
-    setState(() {
-      displayName = response['display_name'] ?? 'User';
-      _isLoading = false;
-    });
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: const Text('Settings')),
-      body:
-          _isLoading
-              ? const Center(child: CircularProgressIndicator())
-              : Padding(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 24.0,
-                  vertical: 32,
-                ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    // Centered avatar and name
-                    Center(
-                      child: Column(
-                        children: [
-                          CircleAvatar(
-                            radius: 50,
-                            backgroundColor: Colors.orangeAccent,
-                            child: Text(
-                              displayName.isNotEmpty
-                                  ? displayName[0].toUpperCase()
-                                  : '?',
-                              style: const TextStyle(
-                                fontSize: 36,
-                                color: AppColors.textPrimary,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
+      body: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 32),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            // Centered avatar and name
+            FutureBuilder<String>(
+              future: userService.getDisplayName(),
+              builder: (context, snapshot) {
+                if (snapshot.connectionState != ConnectionState.done) {
+                  return CircularProgressIndicator();
+                }
+                return Center(
+                  child: Column(
+                    children: [
+                      CircleAvatar(
+                        radius: 50,
+                        backgroundColor: Colors.orangeAccent,
+                        child: Text(
+                          snapshot.data!.isNotEmpty
+                              ? snapshot.data![0].toUpperCase()
+                              : '?',
+                          style: const TextStyle(
+                            fontSize: 36,
+                            color: AppColors.textPrimary,
+                            fontWeight: FontWeight.bold,
                           ),
-                          const SizedBox(height: 16),
-                          Text(
-                            displayName,
-                            style: const TextStyle(
-                              fontSize: 24,
-                              fontWeight: FontWeight.w700,
-                            ),
-                          ),
-                        ],
+                        ),
                       ),
-                    ),
-                    const SizedBox(height: 48),
+                      const SizedBox(height: 16),
+                      Text(
+                        snapshot.data!,
+                        style: const TextStyle(
+                          fontSize: 24,
+                          fontWeight: FontWeight.w700,
+                        ),
+                      ),
+                    ],
+                  ),
+                );
+              },
+            ),
+            const SizedBox(height: 48),
 
-                    // Settings items
-                    ListTile(
-                      leading: const Icon(
-                        Icons.logout,
-                        color: Colors.orangeAccent,
-                      ),
-                      title: const Text('Sign Out'),
-                      onTap: _signOut,
-                    ),
-                  ],
-                ),
-              ),
+            // Settings items
+            ListTile(
+              leading: const Icon(Icons.logout, color: Colors.orangeAccent),
+              title: const Text('Sign Out'),
+              onTap: _signOut,
+            ),
+          ],
+        ),
+      ),
     );
   }
 }

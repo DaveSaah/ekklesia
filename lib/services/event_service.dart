@@ -1,5 +1,5 @@
 import 'dart:convert'; // For encoding/decoding JSON
-import 'package:internet_connection_checker/internet_connection_checker.dart';
+import 'package:ekklesia/services/connection_service.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:ekklesia/models/event.dart';
@@ -9,7 +9,9 @@ class EventService {
 
   // Fetch the latest event
   Future<Event?> getLatestEvent() async {
-    bool isOnline = await _isOnline(); // Check if connected to the internet
+    bool isOnline =
+        await ConnectionService()
+            .isOnline(); // Check if connected to the internet
 
     if (!isOnline) {
       // If offline, fetch event from cache
@@ -39,12 +41,6 @@ class EventService {
     }
   }
 
-  // Check if the device is online or offline using internet_connection_checker
-  Future<bool> _isOnline() async {
-    final connectivityChecker = InternetConnectionChecker.createInstance();
-    return await connectivityChecker.hasConnection;
-  }
-
   // Cache the event data
   Future<void> _cacheEvent(Event event) async {
     final prefs = await SharedPreferences.getInstance();
@@ -65,5 +61,45 @@ class EventService {
     }
 
     return null;
+  }
+
+  // Register user for an event
+  Future<void> registerForEvent(String attendantId, int eventId) async {
+    try {
+      final response = await _client
+          .from('event_attendees') // The table name
+          .insert([
+            {'attendant_id': attendantId, 'event_id': eventId},
+          ]);
+
+      if (response.error != null) {
+        throw Exception(
+          'Error registering for event: ${response.error!.message}',
+        );
+      }
+
+      print("Successfully registered for the event");
+    } catch (e) {
+      print('Error during registration: $e');
+    }
+  }
+
+  // Check if the user is already registered for the event using the Supabase function
+  Future<bool> isUserRegisteredForEvent(String attendantId, int eventId) async {
+    try {
+      final response =
+          await _client
+              .rpc(
+                'is_user_registered_for_event',
+                params: {'attendant_id': attendantId, 'event_id': eventId},
+              )
+              .maybeSingle();
+
+      final isRegistered = response?['registered'] as bool;
+      return isRegistered;
+    } catch (e) {
+      print('Error during check: $e');
+      throw Exception('Failed to check registration status');
+    }
   }
 }

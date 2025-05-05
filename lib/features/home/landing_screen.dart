@@ -88,7 +88,7 @@ class _LandingScreenState extends State<LandingScreen>
                     height: double.infinity,
                     fit: BoxFit.cover,
                   ),
-                  Container(color: Colors.black.withValues(alpha: 100)),
+                  Container(color: Colors.black.withAlpha(200)),
                   SafeArea(
                     child: Padding(
                       padding: const EdgeInsets.all(24.0),

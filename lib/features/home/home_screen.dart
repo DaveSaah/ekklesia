@@ -1,3 +1,4 @@
+import 'package:ekklesia/services/user_service.dart';
 import 'package:ekklesia/theme/app_colors.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
@@ -5,15 +6,47 @@ import 'dart:async';
 import 'package:ekklesia/models/event.dart';
 import 'package:ekklesia/services/event_service.dart';
 
-class HomeScreen extends StatelessWidget {
+class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  State<HomeScreen> createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends State<HomeScreen> {
+  @override
+  build(BuildContext context) {
+    final userService = UserService();
+
     return Scaffold(
       body: SingleChildScrollView(
         child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            // Text("Hello, $displayName"),
+            FutureBuilder<String>(
+              future: userService.getDisplayName(),
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.done) {
+                  return Padding(
+                    padding: const EdgeInsets.only(
+                      left: 24.0,
+                      bottom: 8,
+                      top: 8,
+                    ),
+                    child: Text(
+                      "Hello, ${snapshot.data}",
+                      style: TextStyle(
+                        fontSize: 24,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  );
+                } else {
+                  return Text("");
+                }
+              },
+            ),
             // Event card
             EventCard(),
             // You can add other widgets here if needed
@@ -33,6 +66,7 @@ class EventCard extends StatefulWidget {
 
 class _EventCardState extends State<EventCard> {
   late Future<Event?> _latestEventFuture;
+  bool _isRegistered = false;
 
   @override
   void initState() {
@@ -60,21 +94,6 @@ class _EventCardState extends State<EventCard> {
           );
         }
 
-        // Error state
-        if (snapshot.hasError) {
-          return Card(
-            margin: const EdgeInsets.all(16.0),
-            elevation: 4,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(12),
-            ),
-            child: Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: Center(child: Text('Error: ${snapshot.error}')),
-            ),
-          );
-        }
-
         // No event found state
         if (!snapshot.hasData || snapshot.data == null) {
           return Card(
@@ -95,6 +114,9 @@ class _EventCardState extends State<EventCard> {
         final String formattedDate = DateFormat(
           'MMM dd, yyyy',
         ).format(event.eventDate);
+
+        // Check if the user is already registered for the event
+        _checkIfUserIsRegistered(event.id);
 
         return Card(
           margin: const EdgeInsets.all(16.0),
@@ -148,9 +170,14 @@ class _EventCardState extends State<EventCard> {
                 // Register button
                 ElevatedButton(
                   onPressed: () {
-                    // Handle registration logic
+                    if (!_isRegistered) {
+                      // Handle registration logic if not registered
+                      _registerForEvent(event);
+                    }
                   },
-                  child: const Text("Register for Event"),
+                  child: Text(
+                    _isRegistered ? "Attending" : "Register for Event",
+                  ),
                 ),
               ],
             ),
@@ -158,6 +185,53 @@ class _EventCardState extends State<EventCard> {
         );
       },
     );
+  }
+
+  Future<void> _checkIfUserIsRegistered(int eventId) async {
+    final attendantId = await UserService().getUuid(); // This is a UUID string
+
+    try {
+      final isRegistered = await EventService().isUserRegisteredForEvent(
+        attendantId!,
+        eventId,
+      );
+      setState(() {
+        _isRegistered = isRegistered;
+      });
+    } catch (e) {
+      print('Error during check: $e');
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text("Error checking registration: $e")),
+        );
+      }
+    }
+  }
+
+  // Register user for the event
+  Future<void> _registerForEvent(Event event) async {
+    final attendantId = await UserService().getUuid();
+    final eventId = event.id;
+
+    try {
+      // Register user in event_attendees table
+      await EventService().registerForEvent(attendantId!, eventId);
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text("Successfully registered for the event!"),
+          ),
+        );
+      }
+      // Update the button to "Attending"
+      setState(() {
+        _isRegistered = true;
+      });
+    } catch (e) {
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text("Error: $e")));
+    }
   }
 }
 
@@ -230,13 +304,28 @@ class _CountdownTimerState extends State<CountdownTimer> {
 
     final String countdown = "$days$hours:$minutes:$seconds";
 
-    return Text(
-      "Time Remaining: $countdown",
-      style: const TextStyle(
-        fontSize: 16,
-        fontWeight: FontWeight.bold,
-        color: Colors.red,
-      ),
+    return Row(
+      children: [
+        Icon(Icons.live_tv, color: Colors.red),
+        SizedBox(width: 2),
+        Text(
+          "Upcoming in",
+          style: TextStyle(
+            fontWeight: FontWeight.bold,
+            fontSize: 16,
+            color: Colors.red,
+          ),
+        ),
+        SizedBox(width: 2),
+        Text(
+          countdown,
+          style: const TextStyle(
+            fontSize: 16,
+            fontWeight: FontWeight.bold,
+            color: Colors.red,
+          ),
+        ),
+      ],
     );
   }
 }
