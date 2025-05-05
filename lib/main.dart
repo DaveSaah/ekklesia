@@ -24,6 +24,7 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       theme: ThemeData(brightness: Brightness.dark),
       home: const LoginScreen(),
+        fontFamily: "Inter",
     );
   }
 }
