@@ -1,3 +1,4 @@
+import 'package:ekklesia/features/event/event_chat_screen.dart';
 import 'package:ekklesia/theme/app_colors.dart';
 import 'package:flutter/material.dart';
 import 'package:ekklesia/services/event_service.dart';
@@ -51,6 +52,16 @@ class _EventScreenState extends State<EventScreen> {
                           margin: const EdgeInsets.symmetric(vertical: 8.0),
                           elevation: 5,
                           child: ListTile(
+                            onTap: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder:
+                                      (context) =>
+                                          EventChatScreen(event: event),
+                                ),
+                              );
+                            },
                             contentPadding: const EdgeInsets.all(16.0),
                             title: Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
