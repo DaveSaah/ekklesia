@@ -1,4 +1,5 @@
 import 'package:ekklesia/features/home/splash_screen.dart';
+import 'package:ekklesia/theme/app_colors.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
@@ -21,7 +22,12 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      theme: ThemeData(useMaterial3: true, fontFamily: "Inter"),
+      theme: ThemeData(
+        scaffoldBackgroundColor: AppColors.background,
+        useMaterial3: true,
+        fontFamily: "Inter",
+        primaryColor: AppColors.primary,
+      ),
       home: const SplashScreen(),
     );
   }
