@@ -151,7 +151,7 @@ class _SignupScreenState extends State<SignupScreen>
                         ),
                         child: const Text(
                           'Continue',
-                          style: TextStyle(color: AppColors.accentColor),
+                          style: TextStyle(color: AppColors.accent),
                         ),
                       ),
                     ],
@@ -454,7 +454,7 @@ class _SignupScreenState extends State<SignupScreen>
                                   backgroundColor: AppColors.textSecondary,
                                   strokeWidth: 2,
                                   valueColor: AlwaysStoppedAnimation<Color>(
-                                    AppColors.accentColor,
+                                    AppColors.primary,
                                   ),
                                 ),
                               )
@@ -466,14 +466,14 @@ class _SignupScreenState extends State<SignupScreen>
                                     style: TextStyle(
                                       fontSize: 16,
                                       fontWeight: FontWeight.w500,
-                                      color: AppColors.accentColor,
+                                      color: Colors.white,
                                     ),
                                   ),
                                   SizedBox(width: 8),
                                   Icon(
                                     Icons.arrow_forward,
                                     size: 18,
-                                    color: AppColors.accentColor,
+                                    color: Colors.white,
                                   ),
                                 ],
                               ),
@@ -504,7 +504,7 @@ class _SignupScreenState extends State<SignupScreen>
                             ),
                             child: const Text(
                               "Sign In",
-                              style: TextStyle(fontWeight: FontWeight.w500),
+                              style: TextStyle(fontWeight: FontWeight.w900),
                             ),
                           ),
                         ],

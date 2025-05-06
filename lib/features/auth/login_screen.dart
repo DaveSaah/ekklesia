@@ -128,7 +128,7 @@ class _LoginScreenState extends State<LoginScreen>
                       style: TextStyle(
                         fontSize: 24,
                         fontWeight: FontWeight.bold,
-                        color: AppColors.primary,
+                        color: Theme.of(context).primaryColor,
                       ),
                       textAlign: TextAlign.center,
                     ),
@@ -251,7 +251,7 @@ class _LoginScreenState extends State<LoginScreen>
                                   backgroundColor: AppColors.textSecondary,
                                   strokeWidth: 2,
                                   valueColor: AlwaysStoppedAnimation<Color>(
-                                    AppColors.accentColor,
+                                    AppColors.primary,
                                   ),
                                 ),
                               )
@@ -263,14 +263,14 @@ class _LoginScreenState extends State<LoginScreen>
                                     style: TextStyle(
                                       fontSize: 16,
                                       fontWeight: FontWeight.w500,
-                                      color: AppColors.accentColor,
+                                      color: Colors.white,
                                     ),
                                   ),
                                   SizedBox(width: 8),
                                   Icon(
                                     Icons.arrow_forward,
                                     size: 18,
-                                    color: AppColors.accentColor,
+                                    color: Colors.white,
                                   ),
                                 ],
                               ),
@@ -303,7 +303,7 @@ class _LoginScreenState extends State<LoginScreen>
                             child: Text(
                               "Sign Up",
                               style: TextStyle(
-                                fontWeight: FontWeight.w500,
+                                fontWeight: FontWeight.w900,
                                 color: AppColors.primary,
                               ),
                             ),
