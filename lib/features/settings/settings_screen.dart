@@ -1,7 +1,6 @@
 import 'package:ekklesia/services/user_service.dart';
 import 'package:ekklesia/theme/app_colors.dart';
 import 'package:flutter/material.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:ekklesia/features/home/splash_screen.dart';
 
 class SettingsScreen extends StatefulWidget {
@@ -13,16 +12,16 @@ class SettingsScreen extends StatefulWidget {
 
 class _SettingsScreenState extends State<SettingsScreen> {
   final userService = UserService();
-  final supabase = Supabase.instance.client;
+  late Future<String> _displayName;
 
   @override
   void initState() {
     super.initState();
+    _displayName = userService.getDisplayName();
   }
 
   Future<void> _signOut() async {
-    await supabase.auth.signOut();
-
+    userService.signOut();
     if (mounted) {
       Navigator.pushReplacement(
         context,
@@ -34,7 +33,14 @@ class _SettingsScreenState extends State<SettingsScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Settings')),
+      appBar: AppBar(
+        iconTheme: IconThemeData(color: AppColors.primary),
+        title: const Text(
+          'Settings',
+          style: TextStyle(color: AppColors.primary),
+        ),
+        backgroundColor: AppColors.background,
+      ),
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 32),
         child: Column(
@@ -42,7 +48,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
           children: [
             // Centered avatar and name
             FutureBuilder<String>(
-              future: userService.getDisplayName(),
+              future: _displayName,
               builder: (context, snapshot) {
                 if (snapshot.connectionState != ConnectionState.done) {
                   return CircularProgressIndicator();
@@ -52,14 +58,14 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     children: [
                       CircleAvatar(
                         radius: 50,
-                        backgroundColor: Colors.orangeAccent,
+                        backgroundColor: AppColors.primary,
                         child: Text(
                           snapshot.data!.isNotEmpty
                               ? snapshot.data![0].toUpperCase()
                               : '?',
                           style: const TextStyle(
                             fontSize: 36,
-                            color: AppColors.textPrimary,
+                            color: AppColors.background,
                             fontWeight: FontWeight.bold,
                           ),
                         ),
@@ -69,6 +75,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                         snapshot.data!,
                         style: const TextStyle(
                           fontSize: 24,
+                          color: AppColors.textPrimary,
                           fontWeight: FontWeight.w700,
                         ),
                       ),
@@ -78,11 +85,15 @@ class _SettingsScreenState extends State<SettingsScreen> {
               },
             ),
             const SizedBox(height: 48),
+            const Divider(),
 
             // Settings items
             ListTile(
-              leading: const Icon(Icons.logout, color: Colors.orangeAccent),
-              title: const Text('Sign Out'),
+              leading: const Icon(Icons.logout, color: AppColors.primary),
+              title: const Text(
+                'Sign Out',
+                style: TextStyle(color: AppColors.textPrimary),
+              ),
               onTap: _signOut,
             ),
           ],

@@ -8,6 +8,10 @@ class UserService {
     return _client.auth.currentUser?.id;
   }
 
+  Future<void> signOut() async {
+    await _client.auth.signOut();
+  }
+
   Future<String> getDisplayName() async {
     // load from cache
     final displayName = await _getNameFromCache();
