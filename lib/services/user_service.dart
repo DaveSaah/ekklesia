@@ -1,11 +1,12 @@
+import 'package:ekklesia/services/connection_service.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 class UserService {
   final _client = Supabase.instance.client;
 
-  Future<String?> getUuid() async {
-    return _client.auth.currentUser?.id;
+  Future<String> getUuid() async {
+    return _client.auth.currentUser!.id;
   }
 
   Future<void> signOut() async {
@@ -13,13 +14,19 @@ class UserService {
   }
 
   Future<String> getDisplayName() async {
-    // load from cache
-    final displayName = await _getNameFromCache();
-    if (displayName != null) {
-      return displayName;
+    bool online =
+        await ConnectionService()
+            .isOnline(); // Check if connected to the internet
+
+    if (!online) {
+      // load from cache
+      final displayName = await _getNameFromCache();
+      if (displayName != null) {
+        return displayName;
+      }
     }
 
-    final userId = getUuid();
+    final String userId = await getUuid();
 
     final response =
         await _client

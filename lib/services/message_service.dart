@@ -21,6 +21,7 @@ class MessageService {
       }
     } else {
       // If offline, add to queue
+      print("offine");
       await _queueMessage(message);
     }
   }
@@ -123,10 +124,8 @@ class MessageService {
       for (var messageMap in queue) {
         final message = Message.fromMap(messageMap);
         try {
-          final response = await _client.from(_table).insert(message.toMap());
-          if (response.error == null) {
-            print('Queued message sent.');
-          }
+          await _client.from(_table).insert(message.toMap());
+          print('Queued message sent.');
         } catch (e) {
           print('Error sending queued message: $e');
         }
