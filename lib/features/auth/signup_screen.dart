@@ -151,7 +151,7 @@ class _SignupScreenState extends State<SignupScreen>
                         ),
                         child: const Text(
                           'Continue',
-                          style: TextStyle(color: AppColors.accent),
+                          style: TextStyle(color: Colors.white),
                         ),
                       ),
                     ],
