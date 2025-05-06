@@ -1,13 +1,16 @@
 import 'dart:io';
+import 'package:ekklesia/features/event/image_msg_bubble.dart';
 import 'package:ekklesia/features/event/text_msg_bubble.dart';
 import 'package:ekklesia/features/event/voice_msg_bubble.dart';
 import 'package:ekklesia/services/audio_player_service.dart';
+import 'package:ekklesia/services/upload_image_service.dart';
 import 'package:ekklesia/services/user_service.dart';
 import 'package:flutter/material.dart';
 import 'package:ekklesia/models/event.dart';
 import 'package:ekklesia/models/message.dart';
 import 'package:ekklesia/services/message_service.dart';
 import 'package:flutter_sound/flutter_sound.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
@@ -61,6 +64,39 @@ class _EventChatScreenState extends State<EventChatScreen> {
     super.dispose();
   }
 
+  // Add the method to pick an image
+  Future<void> _pickImage() async {
+    final picker = ImagePicker();
+
+    // Pick the image from the gallery (you can also use ImageSource.camera for camera)
+    final XFile? image = await picker.pickImage(source: ImageSource.gallery);
+
+    if (image != null) {
+      // Upload the image to Imgur
+      final uploadedImageUrl = await UploadImageService().toImgur(
+        File(image.path),
+      );
+
+      if (uploadedImageUrl != null) {
+        // If upload is successful, create a message with the image URL
+        final message = Message(
+          mediaUrl: uploadedImageUrl,
+          mediaType: 'image',
+          eventId: widget.event.id,
+          createdAt: DateTime.now(),
+          senderId: _currentUserId!,
+        );
+
+        // Send the message with the image URL
+        await _messageService.sendMessage(message);
+
+        setState(() {
+          messages.add(message);
+        });
+      }
+    }
+  }
+
   Future<void> _loadCurrentUser() async {
     final uuid = await UserService().getUuid();
     setState(() {
@@ -70,14 +106,9 @@ class _EventChatScreenState extends State<EventChatScreen> {
 
   // Check and request microphone permission
   Future<void> _checkPermission() async {
-    // Request microphone permission
-    PermissionStatus status = await Permission.microphone.request();
-
-    if (status.isGranted) {
-      print('Permission granted');
-    } else {
-      print('Permission denied');
-    }
+    await Permission.microphone.request();
+    await Permission.camera.request();
+    await Permission.storage.request();
   }
 
   void _messageSubscriber() {
@@ -197,16 +228,25 @@ class _EventChatScreenState extends State<EventChatScreen> {
                       itemCount: messages.length,
                       itemBuilder: (context, index) {
                         final message = messages[messages.length - 1 - index];
-                        if (message.mediaType == 'audio') {
-                          return VoiceMsgBubble(
-                            audioUrl: message.mediaUrl!,
-                            audioPlayerService: _audioPlayerService,
-                          );
-                        } else {
-                          return TextMsgBubble(
-                            messageText: message.messageText!,
-                            isOwnMessage: message.senderId == _currentUserId!,
-                          );
+                        switch (message.mediaType) {
+                          case 'audio':
+                            return VoiceMsgBubble(
+                              audioUrl: message.mediaUrl!,
+                              audioPlayerService: _audioPlayerService,
+                              isOwnMessage: message.senderId == _currentUserId,
+                            );
+
+                          case 'image':
+                            return ImageMsgBubble(
+                              imageUrl: message.mediaUrl!,
+                              isMe: message.senderId == _currentUserId,
+                            );
+
+                          default:
+                            return TextMsgBubble(
+                              messageText: message.messageText!,
+                              isOwnMessage: message.senderId == _currentUserId!,
+                            );
                         }
                       },
                     ),
@@ -230,9 +270,7 @@ class _EventChatScreenState extends State<EventChatScreen> {
                   IconButton(
                     icon: const Icon(Icons.camera_alt_outlined),
                     color: Colors.grey.shade700,
-                    onPressed: () {
-                      print("Camera tapped");
-                    },
+                    onPressed: _pickImage,
                   ),
 
                   // Text Input
