@@ -41,7 +41,44 @@ class EventService {
     }
   }
 
-  // Cache the event data
+  // Fetch all events
+  Future<List<Event>> getAllEvents() async {
+    bool isOnline =
+        await ConnectionService()
+            .isOnline(); // Check if connected to the internet
+
+    if (!isOnline) {
+      // If offline, fetch events from cache
+      final eventsFromCache = await _getEventsFromCache();
+      if (eventsFromCache.isNotEmpty) {
+        return eventsFromCache;
+      }
+    }
+
+    // If online, fetch events from network
+    try {
+      final events = await _client
+          .from('events')
+          .select()
+          .order("event_completed", ascending: true)
+          .withConverter((events) => events.map(Event.fromMap).toList());
+
+      // Check for errors in the response
+      if (events.isEmpty) {
+        return [];
+      }
+
+      // Cache events for offline use
+      await _cacheEvents(events);
+
+      return events;
+    } catch (e) {
+      print('Error fetching all events: $e');
+      return [];
+    }
+  }
+
+  // Cache the latest event data
   Future<void> _cacheEvent(Event event) async {
     final prefs = await SharedPreferences.getInstance();
     final eventJson = json.encode(
@@ -50,7 +87,16 @@ class EventService {
     await prefs.setString('latest_event', eventJson);
   }
 
-  // Fetch the cached event from shared preferences
+  // Cache multiple events
+  Future<void> _cacheEvents(List<Event> events) async {
+    final prefs = await SharedPreferences.getInstance();
+    final eventsJson = json.encode(
+      events.map((e) => e.toMap()).toList(),
+    ); // Convert events to JSON string
+    await prefs.setString('events', eventsJson);
+  }
+
+  // Fetch the cached latest event from shared preferences
   Future<Event?> _getEventFromCache() async {
     final prefs = await SharedPreferences.getInstance();
     final eventJson = prefs.getString('latest_event');
@@ -61,6 +107,21 @@ class EventService {
     }
 
     return null;
+  }
+
+  // Fetch cached events from shared preferences
+  Future<List<Event>> _getEventsFromCache() async {
+    final prefs = await SharedPreferences.getInstance();
+    final eventsJson = prefs.getString('events');
+
+    if (eventsJson != null) {
+      final eventsMapList = List<Map<String, dynamic>>.from(
+        json.decode(eventsJson),
+      );
+      return eventsMapList.map((eventMap) => Event.fromMap(eventMap)).toList();
+    }
+
+    return [];
   }
 
   // Register user for an event
