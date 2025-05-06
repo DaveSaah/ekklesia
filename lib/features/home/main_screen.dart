@@ -49,10 +49,11 @@ class _MainScreenState extends State<MainScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        backgroundColor: AppColors.background,
         title: const Text(
           "ekklesia",
           style: TextStyle(
-            color: Colors.orangeAccent,
+            color: AppColors.primary,
             fontWeight: FontWeight.w900,
           ),
         ),
@@ -60,12 +61,14 @@ class _MainScreenState extends State<MainScreen> {
         automaticallyImplyLeading: false,
         actions: [
           IconButton(
-            icon: const Icon(Icons.settings, color: Colors.orangeAccent),
+            icon: const Icon(Icons.settings, color: AppColors.primary),
             onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (_) => const SettingsScreen()),
-              );
+              if (mounted) {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (_) => const SettingsScreen()),
+                );
+              }
             },
           ),
         ],
@@ -99,6 +102,8 @@ class _MainScreenState extends State<MainScreen> {
         selectedItemColor: AppColors.primary,
         unselectedItemColor: AppColors.textSecondary,
         showUnselectedLabels: true,
+        elevation: 0,
+        backgroundColor: AppColors.background,
         onTap: _setCurrentScreen,
       ),
     );

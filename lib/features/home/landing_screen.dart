@@ -104,7 +104,7 @@ class _LandingScreenState extends State<LandingScreen>
                                 style: const TextStyle(
                                   fontSize: 30,
                                   fontWeight: FontWeight.bold,
-                                  color: AppColors.accentColor,
+                                  color: AppColors.accent,
                                 ),
                               ),
                               const SizedBox(height: 24),
@@ -174,7 +174,7 @@ class _LandingScreenState extends State<LandingScreen>
                 _currentPage == landingData.length - 1 ? 'Get Started' : 'Next',
                 style: const TextStyle(
                   fontSize: 18,
-                  color: AppColors.buttonPrimary,
+                  color: AppColors.textPrimary,
                 ),
               ),
             ),
