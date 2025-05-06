@@ -191,7 +191,7 @@ class NewVisitorGuideScreen extends StatelessWidget {
           // Info Sections
           _buildInfoSection(
             icon: Icons.calendar_month,
-            title: 'Date Founded & By Whom',
+            title: 'Beginnings',
             description:
                 'Family of Christ Church was founded on 12th January 2017 by Brother Gervarse with a simple vision of praying together with fellow believers.',
           ),
@@ -221,7 +221,7 @@ class NewVisitorGuideScreen extends StatelessWidget {
           ),
           _buildInfoSection(
             icon: Icons.link,
-            title: 'Free Resources for Your Faith Growth',
+            title: 'Free Resources',
             description:
                 'Explore devotionals, sermon archives, worship playlists, and study plans for your spiritual journey.',
             buttonLabel: 'Visit Resources',
