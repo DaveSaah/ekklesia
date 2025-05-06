@@ -31,6 +31,7 @@ class _EventCardState extends State<EventCard> {
         // Loading state
         if (snapshot.connectionState == ConnectionState.waiting) {
           return Card(
+            color: AppColors.background,
             margin: const EdgeInsets.all(16.0),
             elevation: 4,
             shape: RoundedRectangleBorder(
@@ -46,6 +47,7 @@ class _EventCardState extends State<EventCard> {
         // No event found state
         if (!snapshot.hasData || snapshot.data == null) {
           return Card(
+            color: AppColors.background,
             margin: const EdgeInsets.all(16.0),
             elevation: 4,
             shape: RoundedRectangleBorder(

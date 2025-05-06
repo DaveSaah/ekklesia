@@ -27,6 +27,23 @@ class MyApp extends StatelessWidget {
         useMaterial3: true,
         fontFamily: "Inter",
         primaryColor: AppColors.primary,
+        textTheme: TextTheme(
+          displayLarge: TextStyle(
+            color: AppColors.textPrimary,
+            fontSize: 30,
+            fontWeight: FontWeight.w600,
+          ),
+          displayMedium: TextStyle(
+            color: AppColors.secondary,
+            fontSize: 28,
+            fontWeight: FontWeight.w400,
+          ),
+          displaySmall: TextStyle(
+            color: AppColors.secondary,
+            fontSize: 15,
+            fontWeight: FontWeight.w600,
+          ),
+        ),
       ),
       home: const SplashScreen(),
     );
